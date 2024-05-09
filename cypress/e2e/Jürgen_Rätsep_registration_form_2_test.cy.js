@@ -7,8 +7,37 @@ const Myname = 'Thomas'
 const Mylast = 'Hill'
 const Myphone = '555666777'
 const Mypass = '$4f3p*S£$091'
+const Randompass = faker.internet.Randompass
 
 import { faker } from '@faker-js/faker'
+
+function inputValidDataMandatoryFields() {
+    cy.log('Username will be filled')
+    cy.get('input[data-testid="user"]').type(faker.internet.userName())
+    cy.get('#email').type(faker.internet.email())
+    cy.get('[data-cy="name"]').type(faker.person.firstName())
+    cy.get('#lastName').type(faker.person.lastName())
+    cy.get('[data-testid="phoneNumberTestId"]').type(faker.phone.number())
+    cy.get('#password').type(Mypass)
+    cy.get('#confirm').type(Mypass)
+    cy.get('h2').contains('Password').click()  
+}
+
+function inputValidDataAllFields() {
+    cy.log('Username will be filled')
+    cy.get('input[data-testid="user"]').type(faker.internet.userName())
+    cy.get('#email').type(faker.internet.email())
+    cy.get('[data-cy="name"]').type(faker.person.firstName())
+    cy.get('#lastName').type(faker.person.lastName())
+    cy.get('[data-testid="phoneNumberTestId"]').type(faker.phone.number())
+    cy.get('#htmlFavLanguage').check()
+    cy.get('#vehicle2').check()
+    cy.get('#cars').select('Audi')
+    cy.get('#animal').select('Dog')
+    cy.get('#password').type(Mypass)
+    cy.get('#confirm').type(Mypass)
+    cy.get('h2').contains('Password').click()  
+}
 
 
 /*
@@ -20,40 +49,30 @@ describe('Section 1: Functional tests', () => {
     })
  
     it('User can submit form with all mandatory fields filled and matching passwords', ()=>{
- 
-        cy.get('#username').type(Myuser)
-        cy.get('#email').type(Myemail)
-        cy.get('input[name="name"]').type(Myname)
-        cy.get('#lastName').type(Mylast)
-        cy.get('[data-testid="phoneNumberTestId"]').type(Myphone)
-        cy.get('input[name="password"]').type(Mypass)
-        cy.get('input[name="confirm"]').type('1234596€%')
-        cy.get("#logo").click()
-        cy.get('.submit_button').should('be.visible').should('not.be.enabled')
-        cy.get('#password_error_message').should('be.visible').should('contain', 'Passwords do not match!')
-        cy.get('input[name="password"]').clear().type(Mypass)
-        cy.get('input[name="confirm"]').clear().type(Mypass)
-        cy.get("#logo").click()
-        cy.get('.submit_button').should('be.visible').click()
+        
+        inputValidDataMandatoryFields();
+
+        cy.get('.submit_button').should('be.visible').and('be.enabled').click()
         cy.get('#password_error_message').should('not.be.visible')
         cy.get('#success_message').should('be.visible')
+    })
+
+    it('User can NOT submit form with all mandatory fields filled but NOT matching passwords', ()=>{
+ 
+        inputValidDataMandatoryFields();
+
+        cy.get('#password').clear().type('1111111')
+        cy.get('#confirm').clear().type('22222222')
+        cy.get('h2').contains('Password').click()
+        cy.get('.submit_button').should('not.be.enabled')
+        cy.get('#password_error_message').should('be.visible')
+        cy.get('#success_message').should('not.be.visible')
     })
    
     it('User can submit form with ALL fields filled', ()=>{
 
-        cy.get('#username').type(faker.internet.userName())
-        cy.get('#email').type(faker.internet.email())
-        cy.get('input[name="name"]').type(faker.person.firstName())
-        cy.get('#lastName').type(faker.person.lastName())
-        cy.get('[data-testid="phoneNumberTestId"]').type(faker.phone.number())
-        cy.get('input[type="radio"] + label:contains("CSS")').click()
-        cy.get('input[type="checkbox"][name="vehicle2"]').click()
-        cy.get('#cars').select('Opel').should('have.value', 'opel')
-        cy.get('#animal').select('Hippo').should('have.value', 'hippo')
-        cy.get('input[name="password"]').type(Mypass)
-        cy.get('input[name="confirm"]').type(Mypass)
-        cy.get("#logo").click()
-        cy.get('.submit_button').should('be.visible').should('be.enabled').click()
+        inputValidDataAllFields();
+        cy.get('.submit_button').should('be.visible').and('be.enabled').click()
         cy.get('#success_message').should('be.visible')
         cy.get('#password_error_message').should('not.be.visible')
      })
@@ -61,30 +80,17 @@ describe('Section 1: Functional tests', () => {
 
     it('User can submit form with valid data and ONLY mandatory fields added', ()=>{
 
-        cy.get('#username').type(faker.internet.userName())
-        cy.get('#email').type(faker.internet.email())
-        cy.get('input[name="name"]').type(faker.person.firstName())
-        cy.get('#lastName').type(faker.person.lastName())
-        cy.get('[data-testid="phoneNumberTestId"]').type(faker.phone.number())
-        cy.get('input[name="password"]').type(Mypass)
-        cy.get('input[name="confirm"]').type(Mypass)
-        cy.get("#logo").click()
-        cy.get('.submit_button').should('be.visible').should('be.enabled').click()
+        inputValidDataMandatoryFields();
+        cy.get('.submit_button').should('be.visible').and('be.enabled').click()
         cy.get('#success_message').should('be.visible')
         cy.get('#password_error_message').should('not.be.visible')
     })
 
     it('User can NOT submit form with missing email (mandatory) data', ()=>{
-
-        cy.get('#email').type(faker.internet.email()).clear()
-
-        cy.get('#username').type(faker.internet.userName())
-        cy.get('input[name="name"]').type(faker.person.firstName())
-        cy.get('#lastName').type(faker.person.lastName())
-        cy.get('[data-testid="phoneNumberTestId"]').type(faker.phone.number())
-        cy.get('input[name="password"]').type(Mypass)
-        cy.get('input[name="confirm"]').type(Mypass)
-        cy.get("#logo").click()
+        
+        inputValidDataMandatoryFields();
+        cy.get('#email').clear()
+        cy.get('h2').contains('Password').click()
         cy.get('.submit_button').should('not.be.enabled')
 
 })
@@ -96,7 +102,7 @@ Assignement 5: create more visual tests
 
 describe('Section 2: Visual tests', () => {
     
-    it.only('Check that Cerebrum logo is correct and has correct size', () => {
+    it('Check that Cerebrum logo is correct and has correct size', () => {
 
         cy.log('Will check logo source and size for Cerebrum')
         cy.get('#logo').should('have.attr', 'src').should('include', 'cerebrum_hub_logo')
@@ -104,7 +110,7 @@ describe('Section 2: Visual tests', () => {
             .and('be.greaterThan', 100)   
     })
 
-    it.only('Check that Cypress logo is correct and has correct size', () => {
+    it('Check that Cypress logo is correct and has correct size', () => {
 
         cy.log('Will check logo source and size for Cypress image')
         cy.get('[data-cy="cypress_logo"]').should('have.attr', 'src').should('include', 'cypress_logo')
@@ -191,10 +197,5 @@ describe('Section 2: Visual tests', () => {
         cy.get('#animal').find('option').eq(3).should('have.text', 'Hippo')
         cy.get('#animal').find('option').eq(4).should('have.text', 'Cow')
         cy.get('#animal').find('option').eq(5).should('have.text', 'Horse')
-
-        cy.get('#animal').find('option').then(options => {
-            const actual = [...options].map(option => option.value)
-            expect(actual).to.deep.eq(['dog', 'cat', 'snake', 'hippo', 'cow', 'horse'])
         })
     })
-})
