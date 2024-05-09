@@ -15,6 +15,38 @@ Task list:
     * email format
  */
 
+describe('Visual tests for registration form 3', () => {
+
+})
+
+it('Check that radio button list works correctly', () => {
+
+        cy.get('input[type="radio"]').should('have.length', 4)
+
+        cy.get('input[type="radio"]').next().eq(0).should('have.text','Daily')
+        cy.get('input[type="radio"]').next().eq(1).should('have.text','Weekly')
+        cy.get('input[type="radio"]').next().eq(2).should('have.text','Monthly')
+        cy.get('input[type="radio"]').next().eq(3).should('have.text','Never')
+
+        cy.get('input[type="radio"]').eq(0).should('not.be.checked')
+        cy.get('input[type="radio"]').eq(1).should('not.be.checked')
+        cy.get('input[type="radio"]').eq(2).should('not.be.checked')
+        cy.get('input[type="radio"]').eq(3).should('not.be.checked')
+
+})
+
+it.only('Country dropdown works correctly', () => {
+
+
+    cy.get('#country').children().should('have.length', 4)
+
+    cy.get('#country').find('option').eq(0).should('have.text', ' ')
+    cy.get('#country').find('option').eq(1).should('have.text', 'Spain')
+    cy.get('#country').find('option').eq(2).should('have.text', 'Estonia')
+    cy.get('#country').find('option').eq(3).should('have.text', 'Austria')
+})
+
+
 
 /*
 BONUS TASK: add functional tests for registration form 3
